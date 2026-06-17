@@ -1888,8 +1888,8 @@ document.addEventListener('click', (e)=>{
 });
 
 /* ---------- reserva: abre WhatsApp y la envía a Google Calendar (vía Make) ---------- */
-// ⬇️ Pega aquí la URL del webhook de Make (escenario Webhook → Google Calendar).
-const CALENDAR_WEBHOOK='';
+// Webhook de Make (escenario Webhook → Google Calendar).
+const CALENDAR_WEBHOOK='https://hook.eu1.make.com/yvepnfp51x19vedn46zb0jgzdxr1q2qo';
 $('#r-send')?.addEventListener('click', ()=>{
   const date=$('#r-date').value, time=$('#r-time').value, people=$('#r-people').value.trim();
   const name=$('#r-name').value.trim(), phone=$('#r-phone').value.trim(), notes=$('#r-notes').value.trim();
