@@ -829,7 +829,7 @@ header.scrolled .lang-btn{color:var(--muted)}
         <input id="r-phone" type="tel" inputmode="tel" placeholder="Para confirmarte la reserva">
         <label for="r-notes">Notas (opcional)</label>
         <input id="r-notes" type="text" placeholder="Alergias, terraza, ocasión especial…">
-        <button class="btn btn-primary" id="r-send" style="width:100%;justify-content:center">Reservar por WhatsApp</button>
+        <button class="btn btn-primary" id="r-send" style="width:100%;justify-content:center">Reservar mesa</button>
         <p id="r-note" style="margin-top:10px;font-size:.85rem;color:var(--muted);min-height:1.1em"></p>
       </div>
     </div>
@@ -1887,38 +1887,35 @@ document.addEventListener('click', (e)=>{
   else if(href==='#carta' || a.dataset.cat) track('ver_carta');
 });
 
-/* ---------- reserva: abre WhatsApp y la envía a Google Calendar (vía Make) ---------- */
-// Webhook de Make (escenario Webhook → Google Calendar).
+/* ---------- reserva: se envía directamente desde la web (→ Google Calendar vía Make) ---------- */
 const CALENDAR_WEBHOOK='https://hook.eu1.make.com/yvepnfp51x19vedn46zb0jgzdxr1q2qo';
-$('#r-send')?.addEventListener('click', ()=>{
+$('#r-send')?.addEventListener('click', async ()=>{
   const date=$('#r-date').value, time=$('#r-time').value, people=$('#r-people').value.trim();
   const name=$('#r-name').value.trim(), phone=$('#r-phone').value.trim(), notes=$('#r-notes').value.trim();
-  const note=$('#r-note');
+  const note=$('#r-note'), btn=$('#r-send');
   if(!date||!time||!people||!name||!phone){
     if(note){ note.style.color='#c0392b'; note.textContent='Completa fecha, hora, comensales, nombre y teléfono.'; }
     return;
   }
-  const fmtD=(d)=>{ try{ return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}); }catch(e){ return d; } };
-  const txt='¡Hola! Me gustaría reservar mesa:\n\n'+
-    '📅 '+fmtD(date)+'\n'+'🕒 '+time+'\n'+'👥 '+people+' personas\n'+
-    '🙍 '+name+'\n'+'📞 '+phone+(notes?('\n📝 '+notes):'');
-  track('reserva_whatsapp', {people:Number(people)||undefined});
-  // campos ya montados para Google Calendar (un solo clic por campo en Make)
   const pad=n=>String(n).padStart(2,'0');
   const isoLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
   let start='', end='';
   try{ const sd=new Date(date+'T'+time+':00'); start=isoLocal(sd); end=isoLocal(new Date(sd.getTime()+2*3600*1000)); }catch(e){ start=date+'T'+time+':00'; end=start; }
   const title='Reserva: '+name+' ('+people+' pers.)';
   const description='Tel: '+phone+(notes?(' — '+notes):'');
-  // 1) abrir WhatsApp dentro del gesto del clic (evita el bloqueo de pop-ups)
-  window.open(waLink(txt),'_blank');
-  // 2) enviar la reserva a Google Calendar (vía webhook de Make), en segundo plano
-  if(CALENDAR_WEBHOOK){
-    fetch(CALENDAR_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,date,time,people:Number(people)||2,notes,title,start,end,description})
-    }).catch(()=>{});
-  }
-  if(note){ note.style.color='#2e7d32'; note.textContent='¡Reserva enviada! Te confirmaremos por WhatsApp.'; }
+  track('reserva', {people:Number(people)||undefined});
+  btn.disabled=true; const old=btn.textContent; btn.textContent='Enviando…';
+  if(note){ note.style.color='var(--muted)'; note.textContent='Enviando tu reserva…'; }
+  try{
+    const res=await fetch(CALENDAR_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,date,time,people:Number(people)||2,notes,title,start,end,description})});
+    if(!res.ok) throw new Error('bad status');
+    if(note){ note.style.color='#2e7d32'; note.textContent='¡Reserva enviada! Te confirmaremos lo antes posible.'; }
+    ['#r-date','#r-time','#r-name','#r-phone','#r-notes'].forEach(s=>{ const el=$(s); if(el) el.value=''; });
+    const pe=$('#r-people'); if(pe) pe.value='2';
+  }catch(e){
+    if(note){ note.style.color='#c0392b'; note.textContent='No se pudo enviar la reserva. Inténtalo de nuevo o llámanos.'; }
+  }finally{ btn.disabled=false; btn.textContent=old; }
 });
 
 /* ============================================================
