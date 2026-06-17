@@ -1903,12 +1903,19 @@ $('#r-send')?.addEventListener('click', ()=>{
     '📅 '+fmtD(date)+'\n'+'🕒 '+time+'\n'+'👥 '+people+' personas\n'+
     '🙍 '+name+'\n'+'📞 '+phone+(notes?('\n📝 '+notes):'');
   track('reserva_whatsapp', {people:Number(people)||undefined});
+  // campos ya montados para Google Calendar (un solo clic por campo en Make)
+  const pad=n=>String(n).padStart(2,'0');
+  const isoLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+  let start='', end='';
+  try{ const sd=new Date(date+'T'+time+':00'); start=isoLocal(sd); end=isoLocal(new Date(sd.getTime()+2*3600*1000)); }catch(e){ start=date+'T'+time+':00'; end=start; }
+  const title='Reserva: '+name+' ('+people+' pers.)';
+  const description='Tel: '+phone+(notes?(' — '+notes):'');
   // 1) abrir WhatsApp dentro del gesto del clic (evita el bloqueo de pop-ups)
   window.open(waLink(txt),'_blank');
   // 2) enviar la reserva a Google Calendar (vía webhook de Make), en segundo plano
   if(CALENDAR_WEBHOOK){
     fetch(CALENDAR_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,date,time,people:Number(people)||2,notes})
+      body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,date,time,people:Number(people)||2,notes,title,start,end,description})
     }).catch(()=>{});
   }
   if(note){ note.style.color='#2e7d32'; note.textContent='¡Reserva enviada! Te confirmaremos por WhatsApp.'; }
