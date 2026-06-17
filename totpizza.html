@@ -1948,7 +1948,6 @@ function renderGate(){
     '<input id="gate-pin" type="password" placeholder="Código" autocomplete="new-password"'+(lockMsg?' disabled':'')+'>'+
     '<div class="err" id="gate-err">'+(lockMsg?lockMsg:'')+'</div>'+
     '<button class="btn btn-primary" id="gate-go" style="width:100%;justify-content:center"'+(lockMsg?' disabled':'')+'>Entrar</button>'+
-    '<p style="margin-top:16px;font-size:.8rem;color:var(--muted)">Acceso admin (web completa) o acceso dueño (solo menú diario).</p>'+
     '</div></div>';
   if(lockMsg) return;
   const go=async()=>{
