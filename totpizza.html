@@ -662,7 +662,7 @@ header.scrolled .lang-btn{color:var(--muted)}
       <p class="sub" id="hero-sub">Masa fermentada 48 horas, ingredientes de proximidad y la única opción <em>100% sin gluten certificada</em> en el centro de Playa de Aro.</p>
       <div class="hero-actions">
         <a href="#carta" class="btn btn-primary" id="hero-cta1">Ver carta</a>
-        <a href="#contacto" class="btn btn-ghost" id="hero-wa">Reservar por WhatsApp</a>
+        <a href="#contacto" class="btn btn-ghost" id="hero-wa">Reservar mesa</a>
         <a href="tel:+34972826656" class="btn btn-ghost" id="hero-tel" aria-label="Llamar a TOT PIZZA">📞 972 82 66 56</a>
       </div>
       <div class="hero-meta" id="hero-meta"></div>
@@ -893,7 +893,7 @@ const TRANSLATIONS = {
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
     heroTitle:"La pizzería artesanal sin gluten de Platja d'Aro",
     heroSubtitle:"Masa fermentada 48 horas, ingredientes de proximidad y la única opción <em>100% sin gluten certificada</em> en el centro de Playa de Aro.",
-    heroCta1:"Ver carta",heroCta2:"Reservar por WhatsApp",
+    heroCta1:"Ver carta",heroCta2:"Reservar mesa",
     navInicio:"Inicio",navCarta:"Carta",navNosotros:"Sobre nosotros",navGaleria:"Galería",navMenu:"Menú diario",navUbicacion:"Ubicación",navContacto:"Contacto",navVerCarta:"Ver carta",
     scrollHint:"Descubre",
     ticker:["Masa artesanal fermentada 48 h","100% opciones sin gluten","Menú diario disponible","Ingredientes de proximidad","Horno bien caliente","Hecho a mano cada día"],
@@ -927,7 +927,7 @@ const TRANSLATIONS = {
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
     heroTitle:"La pizzeria artesanal sense gluten de Platja d'Aro",
     heroSubtitle:"Massa fermentada 48 hores, ingredients de proximitat i l'única opció <em>100% sense gluten certificada</em> al centre de Platja d'Aro.",
-    heroCta1:"Veure carta",heroCta2:"Reservar per WhatsApp",
+    heroCta1:"Veure carta",heroCta2:"Reservar taula",
     navInicio:"Inici",navCarta:"Carta",navNosotros:"Sobre nosaltres",navGaleria:"Galeria",navMenu:"Menú diari",navUbicacion:"Ubicació",navContacto:"Contacte",navVerCarta:"Veure carta",
     scrollHint:"Descobreix",
     ticker:["Massa artesanal fermentada 48 h","100% opcions sense gluten","Menú diari disponible","Ingredients de proximitat","Forn ben calent","Fet a mà cada dia"],
@@ -961,7 +961,7 @@ const TRANSLATIONS = {
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
     heroTitle:"The artisan gluten-free pizzeria in Platja d'Aro",
     heroSubtitle:"48-hour fermented dough, local ingredients and the only <em>certified 100% gluten-free</em> option in the heart of Platja d'Aro.",
-    heroCta1:"See menu",heroCta2:"Book via WhatsApp",
+    heroCta1:"See menu",heroCta2:"Book a table",
     navInicio:"Home",navCarta:"Menu",navNosotros:"About us",navGaleria:"Gallery",navMenu:"Daily menu",navUbicacion:"Location",navContacto:"Contact",navVerCarta:"See menu",
     scrollHint:"Discover",
     ticker:["Artisan dough fermented 48 h","100% gluten-free options","Daily menu available","Local ingredients","Hot oven ready","Handmade every day"],
@@ -995,7 +995,7 @@ const TRANSLATIONS = {
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
     heroTitle:"La pizzeria artisanale sans gluten de Platja d'Aro",
     heroSubtitle:"Pâte fermentée 48 heures, ingrédients locaux et la seule option <em>100% sans gluten certifiée</em> au cœur de Platja d'Aro.",
-    heroCta1:"Voir la carte",heroCta2:"Réserver par WhatsApp",
+    heroCta1:"Voir la carte",heroCta2:"Réserver une table",
     navInicio:"Accueil",navCarta:"Carte",navNosotros:"À propos",navGaleria:"Galerie",navMenu:"Menu du jour",navUbicacion:"Localisation",navContacto:"Contact",navVerCarta:"Voir la carte",
     scrollHint:"Découvrir",
     ticker:["Pâte artisanale fermentée 48 h","100% options sans gluten","Menu du jour disponible","Ingrédients locaux","Four bien chaud","Fait à la main chaque jour"],
@@ -1663,8 +1663,8 @@ async function renderSite(){
   if($('#hero-cta1')) $('#hero-cta1').textContent = T('heroCta1');
   if($('#nav-carta-btn')) $('#nav-carta-btn').textContent = T('navVerCarta');
   $('#hero-wa').textContent = T('heroCta2');
-  $('#hero-wa').href = waLink(T('waHero'));
-  $('#hero-wa').setAttribute('target','_blank');
+  $('#hero-wa').href = '#contacto';
+  $('#hero-wa').removeAttribute('target');
 
   // menú
   renderMenu();
