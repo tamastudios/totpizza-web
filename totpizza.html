@@ -1887,7 +1887,8 @@ document.addEventListener('click', (e)=>{
   else if(href==='#carta' || a.dataset.cat) track('ver_carta');
 });
 
-/* ---------- reserva por WhatsApp ---------- */
+/* ---------- reserva: guarda en la BD (Supabase) y abre WhatsApp ---------- */
+const RESERVE_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/reservation-intake';
 $('#r-send')?.addEventListener('click', ()=>{
   const date=$('#r-date').value, time=$('#r-time').value, people=$('#r-people').value.trim();
   const name=$('#r-name').value.trim(), phone=$('#r-phone').value.trim(), notes=$('#r-notes').value.trim();
@@ -1898,15 +1899,16 @@ $('#r-send')?.addEventListener('click', ()=>{
   }
   const fmtD=(d)=>{ try{ return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}); }catch(e){ return d; } };
   const txt='¡Hola! Me gustaría reservar mesa:\n\n'+
-    '📅 '+fmtD(date)+'\n'+
-    '🕒 '+time+'\n'+
-    '👥 '+people+' personas\n'+
-    '🙍 '+name+'\n'+
-    '📞 '+phone+
-    (notes?('\n📝 '+notes):'');
+    '📅 '+fmtD(date)+'\n'+'🕒 '+time+'\n'+'👥 '+people+' personas\n'+
+    '🙍 '+name+'\n'+'📞 '+phone+(notes?('\n📝 '+notes):'');
   track('reserva_whatsapp', {people:Number(people)||undefined});
-  if(note){ note.style.color='var(--muted)'; note.textContent='Abriendo WhatsApp con tu reserva…'; }
+  // 1) abrir WhatsApp dentro del gesto del clic (evita el bloqueo de pop-ups)
   window.open(waLink(txt),'_blank');
+  // 2) guardar la reserva en la base de datos en segundo plano
+  fetch(RESERVE_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,res_date:date,res_time:time,people:Number(people)||2,notes})
+  }).catch(()=>{});
+  if(note){ note.style.color='#2e7d32'; note.textContent='¡Reserva enviada! Te confirmaremos por WhatsApp.'; }
 });
 
 /* ============================================================
