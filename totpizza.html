@@ -15,8 +15,6 @@
 <meta name="ICBM" content="41.8176, 3.0612">
 <link rel="canonical" href="https://totpizza.com/">
 <link rel="alternate" hreflang="es" href="https://totpizza.com/">
-<link rel="alternate" hreflang="ca" href="https://totpizza.com/ca/">
-<link rel="alternate" hreflang="fr" href="https://totpizza.com/fr/">
 <link rel="alternate" hreflang="x-default" href="https://totpizza.com/">
 <!-- Open Graph -->
 <meta property="og:type" content="restaurant">
@@ -53,7 +51,7 @@
 <link rel="icon" type="image/png" sizes="48x48" href="img/TotPizzaCafe_favicon_48x48.png">
 <link rel="icon" type="image/png" sizes="32x32" href="img/TotPizzaCafe_favicon_32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="img/TotPizzaCafe_favicon_16x16.png">
-<link rel="apple-touch-icon" href="img/TotPizzaCafe_isotipo_sin_texto_300dpi.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
 <!-- SEO structured data -->
 <script type="application/ld+json" id="ld-json">
 {
@@ -609,6 +607,19 @@ header.scrolled .lang-btn{color:var(--muted)}
   .reveal{opacity:1;transform:none;transition:none}
 }
 </style>
+<!-- ============ ANALÍTICA (GA4) ============
+     1) Crea una propiedad GA4 y copia tu ID (G-XXXXXXXXXX).
+     2) Sustitúyelo abajo y descomenta el loader.
+     3) GA4 usa cookies: actívalo junto al banner de cookies (RGPD).
+     Mientras tanto, los eventos (llamar, WhatsApp, ver carta, ubicación,
+     reserva) ya se registran en dataLayer y se enviarán al activar GA4. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  // gtag('js', new Date());
+  // gtag('config', 'G-XXXXXXXXXX');
+</script>
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
 </head>
 <body>
 
@@ -617,7 +628,7 @@ header.scrolled .lang-btn{color:var(--muted)}
 
 <header id="header">
   <div class="container nav">
-    <a href="#inicio" class="brand"><img class="brand-logo" src="img/Logo Header.png" alt="Tot Pizza Café — Més que una pizzeria" onerror="this.outerHTML='<span class=&quot;dot&quot;>🍕</span><span id=&quot;brand-name&quot;>TOT PIZZA</span>'"></a>
+    <a href="#inicio" class="brand"><img class="brand-logo" src="img/logo-header.webp" alt="Tot Pizza Café — Més que una pizzeria" onerror="this.outerHTML='<span class=&quot;dot&quot;>🍕</span><span id=&quot;brand-name&quot;>TOT PIZZA</span>'"></a>
     <ul class="nav-links" id="navlinks">
       <li><a href="#inicio" id="nav-a-inicio">Inicio</a></li>
       <li><a href="#menu-diario" data-sec="daily" id="nav-a-menu">Menú diario</a></li>
@@ -805,13 +816,21 @@ header.scrolled .lang-btn{color:var(--muted)}
         <div class="c-card"><div class="ic">🕑</div><div><div class="lbl" id="cc-hours-lbl">Horario</div><div class="v" id="cc-hours" style="font-size:.92rem;font-weight:500"></div></div></div>
       </div>
       <div class="form reveal">
+        <h3 style="font-family:var(--disp);font-size:1.35rem;margin-bottom:14px">Reserva tu mesa</h3>
         <div class="row">
-          <div><label for="f-name" id="f-name-lbl">Nombre</label><input id="f-name" type="text" placeholder="Tu nombre"></div>
-          <div><label for="f-contact" id="f-contact-lbl">Teléfono o email</label><input id="f-contact" type="text" placeholder="Cómo contactarte"></div>
+          <div><label for="r-date">Fecha</label><input id="r-date" type="date"></div>
+          <div><label for="r-time">Hora</label><input id="r-time" type="time"></div>
         </div>
-        <label for="f-msg" id="f-msg-lbl">Mensaje</label>
-        <textarea id="f-msg" placeholder="¿Qué te apetece? Reservas, pedidos, dudas..."></textarea>
-        <button class="btn btn-primary" id="f-send" style="width:100%;justify-content:center">Enviar por WhatsApp</button>
+        <div class="row">
+          <div><label for="r-people">Comensales</label><input id="r-people" type="number" min="1" max="40" value="2" inputmode="numeric"></div>
+          <div><label for="r-name">Nombre</label><input id="r-name" type="text" placeholder="A nombre de…"></div>
+        </div>
+        <label for="r-phone">Teléfono</label>
+        <input id="r-phone" type="tel" inputmode="tel" placeholder="Para confirmarte la reserva">
+        <label for="r-notes">Notas (opcional)</label>
+        <input id="r-notes" type="text" placeholder="Alergias, terraza, ocasión especial…">
+        <button class="btn btn-primary" id="r-send" style="width:100%;justify-content:center">Reservar por WhatsApp</button>
+        <p id="r-note" style="margin-top:10px;font-size:.85rem;color:var(--muted);min-height:1.1em"></p>
       </div>
     </div>
   </div>
@@ -822,7 +841,7 @@ header.scrolled .lang-btn{color:var(--muted)}
   <div class="container">
     <div class="foot-grid">
       <div class="foot-brand">
-        <div class="brand"><span class="dot"><img src="img/Logo.png" alt="Logo TOT PIZZA" onerror="this.outerHTML='🍕'"></span><span id="foot-name">TOT PIZZA</span></div>
+        <div class="brand"><span class="dot"><img src="img/logo.webp" alt="Logo TOT PIZZA" onerror="this.outerHTML='🍕'"></span><span id="foot-name">TOT PIZZA</span></div>
         <p id="foot-tag">Pizza artesanal en el corazón de Platja d'Aro, Costa Brava. Masa casera, ingredientes de proximidad y mucho cariño.</p>
       </div>
       <div class="foot-col">
@@ -1850,12 +1869,45 @@ $('#hamburger').onclick=()=>{ const o=document.body.classList.toggle('menu-open'
 $$('#navlinks a').forEach(a=>a.onclick=()=>document.body.classList.remove('menu-open'));
 
 /* ---------- formulario contacto → WhatsApp ---------- */
-$('#f-send').onclick=()=>{
-  const n=$('#f-name').value.trim(), c=$('#f-contact').value.trim(), m=$('#f-msg').value.trim();
-  if(!m){ toast('Escribe un mensaje 🙂'); $('#f-msg').focus(); return; }
-  const txt=T('waContact')+'\n\n'+(n?('Soy '+n+'.\n'):'')+m+(c?('\n\nContacto: '+c):'');
+/* ---------- analítica (provider-agnóstica) ---------- */
+function track(name, params){
+  try{
+    window.dataLayer = window.dataLayer || [];
+    if(typeof gtag === 'function'){ gtag('event', name, params || {}); }
+    else { window.dataLayer.push(Object.assign({event:name}, params||{})); }
+  }catch(e){}
+}
+// eventos de negocio: llamar, WhatsApp, ver carta, ubicación
+document.addEventListener('click', (e)=>{
+  const a = e.target.closest('a,button'); if(!a) return;
+  const href = a.getAttribute('href') || '';
+  if(href.startsWith('tel:')) track('click_llamar');
+  else if(/wa\.me|whatsapp/i.test(href)) track('click_whatsapp');
+  else if(a.id==='loc-directions' || /maps|\/maps/i.test(href)) track('click_ubicacion');
+  else if(href==='#carta' || a.dataset.cat) track('ver_carta');
+});
+
+/* ---------- reserva por WhatsApp ---------- */
+$('#r-send')?.addEventListener('click', ()=>{
+  const date=$('#r-date').value, time=$('#r-time').value, people=$('#r-people').value.trim();
+  const name=$('#r-name').value.trim(), phone=$('#r-phone').value.trim(), notes=$('#r-notes').value.trim();
+  const note=$('#r-note');
+  if(!date||!time||!people||!name||!phone){
+    if(note){ note.style.color='#c0392b'; note.textContent='Completa fecha, hora, comensales, nombre y teléfono.'; }
+    return;
+  }
+  const fmtD=(d)=>{ try{ return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}); }catch(e){ return d; } };
+  const txt='¡Hola! Me gustaría reservar mesa:\n\n'+
+    '📅 '+fmtD(date)+'\n'+
+    '🕒 '+time+'\n'+
+    '👥 '+people+' personas\n'+
+    '🙍 '+name+'\n'+
+    '📞 '+phone+
+    (notes?('\n📝 '+notes):'');
+  track('reserva_whatsapp', {people:Number(people)||undefined});
+  if(note){ note.style.color='var(--muted)'; note.textContent='Abriendo WhatsApp con tu reserva…'; }
   window.open(waLink(txt),'_blank');
-};
+});
 
 /* ============================================================
    SEGURIDAD — hashing y protección brute-force

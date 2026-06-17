@@ -1,51 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://totpizza.com/</loc>
     <priority>1.0</priority>
     <changefreq>weekly</changefreq>
-    <lastmod>2026-06-11</lastmod>
-    <xhtml:link rel="alternate" hreflang="es" href="https://totpizza.com/"/>
-    <xhtml:link rel="alternate" hreflang="ca" href="https://totpizza.com/ca/"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://totpizza.com/fr/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://totpizza.com/"/>
+    <lastmod>2026-06-17</lastmod>
   </url>
-
-  <url>
-    <loc>https://totpizza.com/carta</loc>
-    <priority>0.9</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-06-11</lastmod>
-  </url>
-
-  <url>
-    <loc>https://totpizza.com/sin-gluten</loc>
-    <priority>0.9</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-06-11</lastmod>
-  </url>
-
-  <url>
-    <loc>https://totpizza.com/menu-diario</loc>
-    <priority>0.8</priority>
-    <changefreq>daily</changefreq>
-    <lastmod>2026-06-11</lastmod>
-  </url>
-
-  <url>
-    <loc>https://totpizza.com/sobre-nosotros</loc>
-    <priority>0.7</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-06-11</lastmod>
-  </url>
-
-  <url>
-    <loc>https://totpizza.com/contacto-reservas</loc>
-    <priority>0.8</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-06-11</lastmod>
-  </url>
-
 </urlset>
