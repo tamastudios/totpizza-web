@@ -1888,7 +1888,7 @@ document.addEventListener('click', (e)=>{
 });
 
 /* ---------- reserva: guarda en la BD (Supabase) y abre WhatsApp ---------- */
-const RESERVE_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/reservation-intake';
+const RESERVE_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/super-task';
 $('#r-send')?.addEventListener('click', ()=>{
   const date=$('#r-date').value, time=$('#r-time').value, people=$('#r-people').value.trim();
   const name=$('#r-name').value.trim(), phone=$('#r-phone').value.trim(), notes=$('#r-notes').value.trim();
@@ -1946,7 +1946,7 @@ function clearFail(){sessionStorage.removeItem('_tpfail');sessionStorage.removeI
 /* ============================================================
    ADMIN — panel de administración
    ============================================================ */
-let unlocked=false, ROLE=null;
+let unlocked=false, ROLE=null, OWNER_PIN='';
 const ADM_TABS=[
   {id:'general',icon:'🏠',name:'General'},
   {id:'hero',icon:'⭐',name:'Portada (Hero)'},
@@ -2010,7 +2010,7 @@ function renderGate(){
     $('#gate-go').disabled=true;
     const h=await hashPin($('#gate-pin').value);
     if(h===DATA.adminPin){clearFail();unlocked=true;ROLE='admin';renderAdmin();}
-    else if(h===DATA.ownerPin){clearFail();unlocked=true;ROLE='owner';renderAdmin();}
+    else if(h===DATA.ownerPin){clearFail();unlocked=true;ROLE='owner';OWNER_PIN=$('#gate-pin').value;renderAdmin();}
     else{
       const left=recordFail();
       $('#gate-err').textContent=left>0?`Código incorrecto — ${left} intento${left===1?'':'s'} restante${left===1?'':'s'}.`:'Demasiados intentos. Panel bloqueado 5 minutos.';
@@ -2051,6 +2051,47 @@ function renderOwnerPanel(){
 
   const H=(t,h)=>panel.insertAdjacentHTML('beforeend','<h2 style="margin-bottom:4px">'+t+'</h2><p class="hint" style="margin-bottom:20px">'+h+'</p>');
   const card=()=>{ const c=document.createElement('div'); c.className='card'; panel.appendChild(c); return c; };
+
+  /* ---------- Reservas (web + WhatsApp) ---------- */
+  const RES_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/super-task';
+  const RES_ST={pendiente:['Pendiente','#b8860b'],confirmada:['Confirmada','#2e7d32'],cancelada:['Cancelada','#888'],no_show:['No-show','#c0392b']};
+  panel.insertAdjacentHTML('beforeend','<h2 style="margin-bottom:4px">Reservas</h2><p class="hint" style="margin-bottom:16px">Reservas recibidas por la web y WhatsApp. Confírmalas o cancélalas.</p>');
+  const rc=card();
+  rc.innerHTML='<div id="own-res" style="font-size:.92rem;color:var(--muted)">Cargando reservas…</div>';
+  async function resCall(payload){
+    const r=await fetch(RES_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({restaurant:'TOT PIZZA',pin:OWNER_PIN},payload))});
+    return r.json();
+  }
+  async function loadRes(){
+    const box=$('#own-res'); if(!box) return;
+    try{
+      const out=await resCall({action:'list'});
+      if(out.error){ box.textContent='No se pudieron cargar las reservas ('+out.error+').'; return; }
+      const list=out.reservations||[];
+      if(!list.length){ box.innerHTML='<p style="padding:6px 0">No hay reservas próximas. 🎉</p>'; return; }
+      box.innerHTML=list.map(r=>{
+        const st=RES_ST[r.status]||RES_ST.pendiente;
+        const d=(()=>{try{return new Date(r.res_date+'T00:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});}catch(e){return r.res_date;}})();
+        return '<div style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fdfaf3">'+
+          '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">'+
+            '<div><b>'+esc(r.name)+'</b> · '+esc(r.people)+' pers.<br><span style="color:var(--muted);font-size:.85rem">'+d+' · '+esc(r.res_time)+' · '+esc(r.phone||'')+(r.source==='whatsapp'?' · WhatsApp':'')+'</span>'+(r.notes?'<br><span style="color:var(--muted);font-size:.85rem">📝 '+esc(r.notes)+'</span>':'')+'</div>'+
+            '<span style="font-weight:700;font-size:.8rem;color:'+st[1]+'">'+st[0]+'</span>'+
+          '</div>'+
+          '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'+
+            (r.status!=='confirmada'?'<button class="btn-sm btn-soft res-act" data-id="'+r.id+'" data-st="confirmada">✓ Confirmar</button>':'')+
+            (r.status!=='cancelada'?'<button class="btn-sm btn-del res-act" data-id="'+r.id+'" data-st="cancelada">✕ Cancelar</button>':'')+
+            (r.phone?'<a class="btn-sm btn-soft" href="tel:'+esc(r.phone)+'" style="text-decoration:none">📞 Llamar</a>':'')+
+          '</div>'+
+        '</div>';
+      }).join('');
+      $$('.res-act',box).forEach(b=>b.onclick=async()=>{
+        b.disabled=true;
+        const out2=await resCall({action:'update',id:b.dataset.id,status:b.dataset.st});
+        if(out2&&out2.ok){ toast('Reserva actualizada'); loadRes(); } else { toast('No se pudo actualizar'); b.disabled=false; }
+      });
+    }catch(e){ box.textContent='Error de conexión al cargar reservas.'; }
+  }
+  loadRes();
 
   H('Editar menú diario','Los cambios se muestran en la web al guardar.');
   const c=card();
