@@ -1996,6 +1996,37 @@ function renderOwnerPanel(){
   const addDish=document.createElement('button'); addDish.className='add-btn'; addDish.textContent='+ Añadir plato';
   addDish.onclick=()=>{ d.dishes.push({name:'Nuevo plato',desc:'',price:''}); renderDishes(); };
   c2.appendChild(addDish);
+
+  /* ---------- Soporte: contactar con TAMA Studios ---------- */
+  const TAMA_SUPPORT_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/dynamic-endpoint';
+  const sup={name:'',email:'',subject:'',message:''};
+  const c3=card();
+  c3.insertAdjacentHTML('beforeend',
+    '<h3 style="font-size:1.1rem;margin-bottom:4px">🛟 Soporte · Contacta con TAMA Studios</h3>'+
+    '<p class="hint" style="margin-bottom:16px">¿Una duda, un cambio en la web o algo que no funciona? Escríbenos y lo recibimos al instante.</p>');
+  c3.appendChild(fld('Tu nombre','¿Con quién hablamos?','',v=>sup.name=v));
+  c3.appendChild(fld('Tu email','Para poder responderte','',v=>sup.email=v));
+  c3.appendChild(fld('Asunto','Ej: Cambiar el horario','',v=>sup.subject=v));
+  c3.appendChild(fld('Mensaje','Cuéntanos qué necesitas','',v=>sup.message=v,'text',true));
+  const note=document.createElement('div'); note.style.cssText='margin-top:10px;font-size:.92rem;min-height:1.2em';
+  const send=document.createElement('button'); send.className='btn btn-primary'; send.style.cssText='margin-top:6px'; send.textContent='Enviar a soporte';
+  send.onclick=async()=>{
+    note.textContent='';
+    if(!sup.name.trim()||!sup.email.trim()||!sup.message.trim()){ note.style.color='#c0392b'; note.textContent='Completa nombre, email y mensaje.'; return; }
+    send.disabled=true; const old=send.textContent; send.textContent='Enviando…';
+    try{
+      const res=await fetch(TAMA_SUPPORT_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:sup.name,email:sup.email,subject:sup.subject,message:sup.message,company:'TOT Pizza'})});
+      const out=await res.json().catch(()=>({}));
+      if(res.ok&&out.ok){
+        toast('✓ Mensaje enviado a soporte');
+        note.style.color='#2e7d32'; note.textContent='¡Gracias! Hemos recibido tu mensaje y te responderemos pronto.';
+        sup.name=sup.email=sup.subject=sup.message=''; $$('input,textarea',c3).forEach(el=>el.value='');
+      } else { note.style.color='#c0392b'; note.textContent=out.error||'No se pudo enviar. Inténtalo de nuevo.'; }
+    }catch(e){ note.style.color='#c0392b'; note.textContent='Error de conexión. Inténtalo de nuevo.'; }
+    finally{ send.disabled=false; send.textContent=old; }
+  };
+  c3.appendChild(send); c3.appendChild(note);
 }
 
 /* ---------- imagen reutilizable en admin ---------- */
