@@ -521,6 +521,7 @@ footer{background:#1b130f;color:#cdbfae;padding:64px 0 26px}
 .ing-list{display:flex;flex-wrap:wrap;gap:6px}
 .ing-tag{font-size:.82rem;font-weight:600;padding:.28em .75em;background:var(--white);border:1px solid var(--line);border-radius:999px;color:var(--ink);white-space:nowrap}
 @media(max-width:500px){.ing-box{padding:14px 14px}.ing-tag{font-size:.78rem}}
+.menu-grid > .ing-box{grid-column:1 / -1;margin-bottom:0}
 
 /* MODAL nueva categoría */
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(36,27,22,.6);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
@@ -1754,14 +1755,15 @@ function renderMenu(){
       '<span class="mah-chev" aria-hidden="true">▾</span></button>'+
       '<div class="menu-grid" id="grid-'+c.id+'">'+c.items.map(it=>dishHTML(it)).join('')+'</div>';
     groups.appendChild(grp);
-    // ingredient box after the first category (pizzes per metres)
+    // ingredientes dentro de la primera categoría (Pizzes per metres):
+    // quedan ocultos en el acordeón y aparecen al desplegar esa sección
     if(ci === 0){
       const ings = getIngredients();
       if(ings.length){
         const box = document.createElement('div'); box.className='ing-box';
         box.innerHTML = '<div class="ing-box-head"><span>🧀 '+esc(T('ingTitle'))+'</span></div>'+
           '<div class="ing-list">'+ings.map(i=>'<span class="ing-tag">'+esc(i)+'</span>').join('')+'</div>';
-        groups.appendChild(box);
+        grp.querySelector('.menu-grid').appendChild(box);
       }
     }
   });
