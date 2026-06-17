@@ -1887,8 +1887,9 @@ document.addEventListener('click', (e)=>{
   else if(href==='#carta' || a.dataset.cat) track('ver_carta');
 });
 
-/* ---------- reserva: guarda en la BD (Supabase) y abre WhatsApp ---------- */
-const RESERVE_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/super-task';
+/* ---------- reserva: abre WhatsApp y la envía a Google Calendar (vía Make) ---------- */
+// ⬇️ Pega aquí la URL del webhook de Make (escenario Webhook → Google Calendar).
+const CALENDAR_WEBHOOK='';
 $('#r-send')?.addEventListener('click', ()=>{
   const date=$('#r-date').value, time=$('#r-time').value, people=$('#r-people').value.trim();
   const name=$('#r-name').value.trim(), phone=$('#r-phone').value.trim(), notes=$('#r-notes').value.trim();
@@ -1904,10 +1905,12 @@ $('#r-send')?.addEventListener('click', ()=>{
   track('reserva_whatsapp', {people:Number(people)||undefined});
   // 1) abrir WhatsApp dentro del gesto del clic (evita el bloqueo de pop-ups)
   window.open(waLink(txt),'_blank');
-  // 2) guardar la reserva en la base de datos en segundo plano
-  fetch(RESERVE_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,res_date:date,res_time:time,people:Number(people)||2,notes})
-  }).catch(()=>{});
+  // 2) enviar la reserva a Google Calendar (vía webhook de Make), en segundo plano
+  if(CALENDAR_WEBHOOK){
+    fetch(CALENDAR_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({restaurant:'TOT PIZZA',name,phone,date,time,people:Number(people)||2,notes})
+    }).catch(()=>{});
+  }
   if(note){ note.style.color='#2e7d32'; note.textContent='¡Reserva enviada! Te confirmaremos por WhatsApp.'; }
 });
 
@@ -2051,47 +2054,6 @@ function renderOwnerPanel(){
 
   const H=(t,h)=>panel.insertAdjacentHTML('beforeend','<h2 style="margin-bottom:4px">'+t+'</h2><p class="hint" style="margin-bottom:20px">'+h+'</p>');
   const card=()=>{ const c=document.createElement('div'); c.className='card'; panel.appendChild(c); return c; };
-
-  /* ---------- Reservas (web + WhatsApp) ---------- */
-  const RES_URL='https://kdeeeoltygdrdyouxndo.supabase.co/functions/v1/super-task';
-  const RES_ST={pendiente:['Pendiente','#b8860b'],confirmada:['Confirmada','#2e7d32'],cancelada:['Cancelada','#888'],no_show:['No-show','#c0392b']};
-  panel.insertAdjacentHTML('beforeend','<h2 style="margin-bottom:4px">Reservas</h2><p class="hint" style="margin-bottom:16px">Reservas recibidas por la web y WhatsApp. Confírmalas o cancélalas.</p>');
-  const rc=card();
-  rc.innerHTML='<div id="own-res" style="font-size:.92rem;color:var(--muted)">Cargando reservas…</div>';
-  async function resCall(payload){
-    const r=await fetch(RES_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({restaurant:'TOT PIZZA',pin:OWNER_PIN},payload))});
-    return r.json();
-  }
-  async function loadRes(){
-    const box=$('#own-res'); if(!box) return;
-    try{
-      const out=await resCall({action:'list'});
-      if(out.error){ box.textContent='No se pudieron cargar las reservas ('+out.error+').'; return; }
-      const list=out.reservations||[];
-      if(!list.length){ box.innerHTML='<p style="padding:6px 0">No hay reservas próximas. 🎉</p>'; return; }
-      box.innerHTML=list.map(r=>{
-        const st=RES_ST[r.status]||RES_ST.pendiente;
-        const d=(()=>{try{return new Date(r.res_date+'T00:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});}catch(e){return r.res_date;}})();
-        return '<div style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fdfaf3">'+
-          '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">'+
-            '<div><b>'+esc(r.name)+'</b> · '+esc(r.people)+' pers.<br><span style="color:var(--muted);font-size:.85rem">'+d+' · '+esc(r.res_time)+' · '+esc(r.phone||'')+(r.source==='whatsapp'?' · WhatsApp':'')+'</span>'+(r.notes?'<br><span style="color:var(--muted);font-size:.85rem">📝 '+esc(r.notes)+'</span>':'')+'</div>'+
-            '<span style="font-weight:700;font-size:.8rem;color:'+st[1]+'">'+st[0]+'</span>'+
-          '</div>'+
-          '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'+
-            (r.status!=='confirmada'?'<button class="btn-sm btn-soft res-act" data-id="'+r.id+'" data-st="confirmada">✓ Confirmar</button>':'')+
-            (r.status!=='cancelada'?'<button class="btn-sm btn-del res-act" data-id="'+r.id+'" data-st="cancelada">✕ Cancelar</button>':'')+
-            (r.phone?'<a class="btn-sm btn-soft" href="tel:'+esc(r.phone)+'" style="text-decoration:none">📞 Llamar</a>':'')+
-          '</div>'+
-        '</div>';
-      }).join('');
-      $$('.res-act',box).forEach(b=>b.onclick=async()=>{
-        b.disabled=true;
-        const out2=await resCall({action:'update',id:b.dataset.id,status:b.dataset.st});
-        if(out2&&out2.ok){ toast('Reserva actualizada'); loadRes(); } else { toast('No se pudo actualizar'); b.disabled=false; }
-      });
-    }catch(e){ box.textContent='Error de conexión al cargar reservas.'; }
-  }
-  loadRes();
 
   H('Editar menú diario','Los cambios se muestran en la web al guardar.');
   const c=card();
