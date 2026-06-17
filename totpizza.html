@@ -259,6 +259,8 @@ header.scrolled .hamburger{background:rgba(36,27,22,.08)}
 .hamburger span{position:absolute;left:12px;right:12px;height:2.5px;background:#fff;border-radius:2px;transition:.3s}
 header.scrolled .hamburger span{background:var(--dark)}
 .hamburger span:nth-child(1){top:16px}.hamburger span:nth-child(2){top:22px}.hamburger span:nth-child(3){top:28px}
+body.menu-open .hamburger{background:transparent}
+body.menu-open .hamburger span{background:var(--dark) !important}
 body.menu-open .hamburger span:nth-child(1){top:22px;transform:rotate(45deg)}
 body.menu-open .hamburger span:nth-child(2){opacity:0}
 body.menu-open .hamburger span:nth-child(3){top:22px;transform:rotate(-45deg)}
@@ -297,10 +299,17 @@ section{padding:96px 0}
 .cat-pill{padding:.62em 1.25em;border-radius:999px;border:2px solid var(--line);font-weight:700;font-size:.95rem;color:var(--ink);transition:.2s;background:var(--white)}
 .cat-pill:hover{border-color:var(--primary);color:var(--primary)}
 .cat-pill.active{background:var(--dark);border-color:var(--dark);color:#fff}
-.menu-group{margin-bottom:54px;scroll-margin-top:120px}
-.menu-group > h3{font-size:1.7rem;color:var(--primary);display:flex;align-items:center;gap:14px;margin-bottom:24px}
-.menu-group > h3::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--line),transparent)}
-.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+.menu-group{margin-bottom:14px;scroll-margin-top:96px;border:1px solid var(--line);border-radius:var(--r);background:var(--white);overflow:hidden;box-shadow:0 8px 24px -22px rgba(56,35,20,.5)}
+.menu-acc-head{width:100%;display:flex;align-items:center;gap:14px;padding:18px 22px;background:none;text-align:left;cursor:pointer;border-bottom:1px solid transparent;transition:background .2s;font-family:inherit}
+.menu-acc-head:hover{background:rgba(0,0,0,.025)}
+.menu-group.open .menu-acc-head{border-bottom-color:var(--line)}
+.menu-acc-head .mah-title{font-family:var(--disp);font-weight:600;font-size:clamp(1.25rem,3.5vw,1.55rem);color:var(--primary);line-height:1.1}
+.menu-acc-head .mah-count{margin-left:auto;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);white-space:nowrap}
+.menu-acc-head .mah-chev{font-size:1rem;color:var(--muted);transition:transform .3s;flex:none}
+.menu-group.open .menu-acc-head .mah-chev{transform:rotate(180deg)}
+.menu-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:18px}
+.menu-group.open .menu-grid{display:grid;animation:accfade .28s ease}
+@keyframes accfade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .dish{display:flex;gap:16px;background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:14px;transition:transform .2s,box-shadow .2s}
 .dish:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .dish-thumb{width:88px;height:88px;border-radius:14px;flex:none}
@@ -392,8 +401,8 @@ footer{background:#1b130f;color:#cdbfae;padding:64px 0 26px}
 .lightbox .lb-close{position:absolute;top:22px;right:26px;font-size:2rem;color:#fff;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.12)}
 
 /* TOAST */
-.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,140%);z-index:120;background:var(--dark);color:#fff;padding:14px 22px;border-radius:999px;font-weight:600;box-shadow:var(--shadow);transition:transform .35s;display:flex;gap:10px;align-items:center}
-.toast.show{transform:translate(-50%,0)}
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,200%);opacity:0;visibility:hidden;pointer-events:none;z-index:120;background:var(--dark);color:#fff;padding:14px 22px;border-radius:999px;font-weight:600;box-shadow:var(--shadow);transition:transform .35s,opacity .35s,visibility .35s;display:flex;gap:10px;align-items:center}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
 
 /* REVEAL ANIM */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
@@ -564,11 +573,16 @@ header.scrolled .lang-btn{color:var(--muted)}
 }
 @media(max-width:760px){
   section{padding:68px 0}
-  .nav-links{position:fixed;inset:0 0 0 auto;width:min(80vw,320px);background:var(--cream);flex-direction:column;align-items:stretch;padding:96px 24px 30px;gap:6px;transform:translateX(105%);transition:transform .35s;box-shadow:-20px 0 60px -20px rgba(0,0,0,.4);z-index:55}
+  .nav-links{position:fixed;inset:0 0 0 auto;width:min(82vw,330px);background:var(--cream);flex-direction:column;align-items:stretch;padding:88px 22px 30px;gap:4px;transform:translateX(105%);transition:transform .35s ease;box-shadow:-24px 0 70px -24px rgba(0,0,0,.55);z-index:65;overflow-y:auto;border-left:1px solid var(--line)}
   body.menu-open .nav-links{transform:none}
-  .nav-links a{color:var(--ink) !important;font-size:1.1rem;padding:.7em 1em}
+  .nav-links a{color:var(--ink) !important;font-size:1.08rem;padding:.8em 1em;border-radius:12px}
   .nav-links a:hover{background:rgba(199,64,47,.1) !important;color:var(--primary)!important}
-  .hamburger{display:block;z-index:58}
+  body.menu-open{overflow:hidden}
+  /* el blur de la cabecera al hacer scroll convierte la cabecera en bloque
+     contenedor del panel fixed y lo encoge: lo neutralizamos al abrir el menú */
+  header{transform:translateZ(0);overflow:hidden}
+  body.menu-open header{transform:none;overflow:visible;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+  .hamburger{display:block;z-index:70}
   .nav-cta .btn{display:none}
   .menu-grid{grid-template-columns:1fr}
   .gallery-grid{grid-template-columns:repeat(2,1fr)}
@@ -885,9 +899,9 @@ const TRANSLATIONS = {
     heroMeta2:"Hoy abierto",heroMeta3:"Reservas",
     ingTitle:"Ingredientes disponibles",
     ingList:["Tomate","Mozzarella","Bacón","Jamón dulce","Jamón serrano","Pepperoni","Atún","Champiñones","Cebolla","Aceitunas","Anchoas","Berenjena","Pimiento verde","Pimiento rojo","Rúcula","Albahaca","Queso de cabra","Gorgonzola","Huevo"],
-    waHero:"Hola TOT PIZZA, me gustaría hacer un pedido / reserva.",
-    waContact:"Hola TOT PIZZA 👋",waDaily:"Hola TOT PIZZA! Me gustaría reservar mesa para el menú diario.",
-    waFloat:"Hola TOT PIZZA, quería preguntaros una cosa."
+    waHero:"¡Hola! Me gustaría reservar mesa.",
+    waContact:"¡Hola! Me gustaría reservar mesa.",waDaily:"¡Hola! Me gustaría reservar mesa.",
+    waFloat:"¡Hola! Me gustaría reservar mesa."
   },
   ca:{
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
@@ -919,9 +933,9 @@ const TRANSLATIONS = {
     heroMeta2:"Avui obert",heroMeta3:"Reserves",
     ingTitle:"Ingredients disponibles",
     ingList:["Tomàquet","Mozzarella","Bacó","Pernil dolç","Pernil secat","Peperoni","Tonyina","Xampinyons","Ceba","Olives","Anxoves","Albergínia","Pebre verd","Pebre vermell","Rúcula","Alfàbrega","Formatge de cabra","Gorgonzola","Ou"],
-    waHero:"Hola TOT PIZZA, m'agradaria fer una comanda / reserva.",
-    waContact:"Hola TOT PIZZA 👋",waDaily:"Hola TOT PIZZA! M'agradaria reservar taula per al menú diari.",
-    waFloat:"Hola TOT PIZZA, volia preguntar-vos una cosa."
+    waHero:"Hola! M'agradaria reservar taula.",
+    waContact:"Hola! M'agradaria reservar taula.",waDaily:"Hola! M'agradaria reservar taula.",
+    waFloat:"Hola! M'agradaria reservar taula."
   },
   en:{
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
@@ -953,9 +967,9 @@ const TRANSLATIONS = {
     heroMeta2:"Open today",heroMeta3:"Reservations",
     ingTitle:"Available toppings",
     ingList:["Tomato","Mozzarella","Bacon","Ham","Cured ham","Pepperoni","Tuna","Mushrooms","Onion","Olives","Anchovies","Aubergine","Green pepper","Red pepper","Rocket","Basil","Goat cheese","Gorgonzola","Egg"],
-    waHero:"Hello TOT PIZZA, I'd like to place an order / reservation.",
-    waContact:"Hello TOT PIZZA 👋",waDaily:"Hello TOT PIZZA! I'd like to book a table for the daily menu.",
-    waFloat:"Hello TOT PIZZA, I wanted to ask you something."
+    waHero:"Hi! I'd like to book a table.",
+    waContact:"Hi! I'd like to book a table.",waDaily:"Hi! I'd like to book a table.",
+    waFloat:"Hi! I'd like to book a table."
   },
   fr:{
     heroEyebrow:"TOT PIZZA · Platja d'Aro · Costa Brava",
@@ -987,9 +1001,9 @@ const TRANSLATIONS = {
     heroMeta2:"Ouvert aujourd'hui",heroMeta3:"Réservations",
     ingTitle:"Garnitures disponibles",
     ingList:["Tomate","Mozzarella","Bacon","Jambon cuit","Jambon cru","Pepperoni","Thon","Champignons","Oignon","Olives","Anchois","Aubergine","Poivron vert","Poivron rouge","Roquette","Basilic","Chèvre","Gorgonzola","Œuf"],
-    waHero:"Bonjour TOT PIZZA, je voudrais passer une commande / réservation.",
-    waContact:"Bonjour TOT PIZZA 👋",waDaily:"Bonjour TOT PIZZA ! Je voudrais réserver une table pour le menu du jour.",
-    waFloat:"Bonjour TOT PIZZA, je voulais vous poser une question."
+    waHero:"Bonjour ! Je voudrais réserver une table.",
+    waContact:"Bonjour ! Je voudrais réserver une table.",waDaily:"Bonjour ! Je voudrais réserver une table.",
+    waFloat:"Bonjour ! Je voudrais réserver une table."
   }
 };
 let LANG=(()=>{try{return localStorage.getItem('totpizza_lang')||'es';}catch(e){return 'es';}})();
@@ -1726,13 +1740,19 @@ function applyI18n(){
 
 function renderMenu(){
   // pills
-  $('#menu-cats').innerHTML = DATA.menu.map((c,i)=>'<button class="cat-pill'+(i===0?' active':'')+'" data-cat="'+c.id+'">'+esc(catName(c.name))+'</button>').join('');
-  // grupos
+  $('#menu-cats').innerHTML = DATA.menu.map((c)=>'<button class="cat-pill" data-cat="'+c.id+'">'+esc(catName(c.name))+'</button>').join('');
+  // grupos (acordeón: todos cerrados al entrar)
   const groups = document.createElement('div');
+  const DW={es:'platos',ca:'plats',en:'dishes',fr:'plats'};
+  const word=DW[(typeof LANG!=='undefined'?LANG:'es')]||'platos';
   DATA.menu.forEach((c,ci)=>{
     const grp = document.createElement('div');
     grp.className = 'menu-group'; grp.id = 'grp-'+c.id;
-    grp.innerHTML = '<h3>'+esc(catName(c.name))+'</h3><div class="menu-grid">'+c.items.map(it=>dishHTML(it)).join('')+'</div>';
+    grp.innerHTML = '<button class="menu-acc-head" aria-expanded="false" aria-controls="grid-'+c.id+'">'+
+      '<span class="mah-title">'+esc(catName(c.name))+'</span>'+
+      '<span class="mah-count">'+c.items.length+' '+word+'</span>'+
+      '<span class="mah-chev" aria-hidden="true">▾</span></button>'+
+      '<div class="menu-grid" id="grid-'+c.id+'">'+c.items.map(it=>dishHTML(it)).join('')+'</div>';
     groups.appendChild(grp);
     // ingredient box after the first category (pizzes per metres)
     if(ci === 0){
@@ -1751,11 +1771,22 @@ function renderMenu(){
   DATA.menu.forEach(c=>c.items.forEach(it=>{
     if(it.img){ const el=$('#dish-'+it.id+' .dish-thumb'); if(el) setBg(el,it.img); }
   }));
-  // pills behaviour
-  $$('#menu-cats .cat-pill').forEach(p=>p.onclick=()=>{
-    $$('#menu-cats .cat-pill').forEach(x=>x.classList.remove('active')); p.classList.add('active');
-    const t=$('#grp-'+p.dataset.cat); if(t) window.scrollTo({top:t.getBoundingClientRect().top+scrollY-110,behavior:'smooth'});
+  // acordeón: abrir un grupo (cierra los demás) y sincronizar pestaña
+  function openGroup(grp,scroll){
+    $$('#menu-groups .menu-group').forEach(g=>{
+      const on=g===grp;
+      g.classList.toggle('open',on);
+      const h=g.querySelector('.menu-acc-head'); if(h) h.setAttribute('aria-expanded',on?'true':'false');
+    });
+    $$('#menu-cats .cat-pill').forEach(x=>x.classList.toggle('active','grp-'+x.dataset.cat===grp.id));
+    if(scroll) window.scrollTo({top:grp.getBoundingClientRect().top+scrollY-96,behavior:'smooth'});
+  }
+  $$('#menu-groups .menu-acc-head').forEach(h=>h.onclick=()=>{
+    const grp=h.closest('.menu-group');
+    if(grp.classList.contains('open')){ grp.classList.remove('open'); h.setAttribute('aria-expanded','false'); }
+    else openGroup(grp,false);
   });
+  $$('#menu-cats .cat-pill').forEach(p=>p.onclick=()=>{ const t=$('#grp-'+p.dataset.cat); if(t) openGroup(t,true); });
 }
 function dishHTML(it){
   const thumb = it.img!==undefined && it.img!=='' ? '<div class="dish-thumb ph-img"></div>' : '';
